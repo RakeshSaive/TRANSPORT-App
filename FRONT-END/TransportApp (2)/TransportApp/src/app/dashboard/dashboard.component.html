@@ -1,0 +1,190 @@
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #2a5a8e;">
+    <a class="navbar-brand" href="#"><strong style="font-size: xx-large;color:antiquewhite"><i class="fas fa-map-marked-alt"></i> &nbsp;Transport App</strong></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" style="font-size:larger;color:antiquewhite" [routerLink]="['/dashboard',id]"> <b>Welcome {{id}}</b> <span class="sr-only" >(current)</span></a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link"  style="font-size:larger;color:antiquewhite" [routerLink]="['/dashboard',id]"> <b>Home</b> <span class="sr-only">(current)</span></a>
+        </li>
+       
+       
+      </ul>
+      <form class="form-inline my-lg-0 my-lg-0" (ngSubmit)="searchFilter()">
+        <input [(ngModel)]="val" class="form-control mr-sm-2"  name="val" type="text" placeholder="Search" aria-label="Search">
+        <button class="btn btn-success my-4 my-lg-3" type="submit">Search</button>
+      </form>
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item dropdown">
+            <a style="font-size:xx-large;color:antiquewhite"class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <i class="fas fa-caret-square-down"></i>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              
+                <button class="dropdown-item" [routerLink]="['/prof',id]"  type="submit">Profile <i class="fas fa-user-alt" style="color:blue;font-size: larger;"></i></button>
+              
+              
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item"  [routerLink]="['/change',id]">Change Password <i class="fas fa-unlock-alt" style="color:green;font-size:larger"></i></a>
+              <div class="dropdown-divider"></div>
+              
+              <a class="dropdown-item"  role="button" [routerLink]="['/wishlist',id]">My Wishlist <i class="fa fa-heart" style="color:red;font-size: larger;"></i></a>
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item" (click)="logoutUser()"  type="submit">Sign out <i class="fas fa-sign-out-alt" style="color:orange;font-size: larger;" ></i></button>
+              
+              
+            </div>
+          </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container py-5 h-100" >
+    
+    <div *ngIf="msg!=''">
+    <div class="alert alert-danger d-flex align-items-center"   role="alert">
+     
+     
+       {{msg}}
+    </div>
+    </div>
+    <div *ngIf="places?.length==0" class="text-center">
+      <img class="" src="assets/assets/img/perfect_transport.jpg" alt=".." style="width: 1300px;"  />
+    </div>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-md-3 row-cols-md-4">
+      <div *ngFor="let place of places">
+        <div class="col mb-4">
+        <div class=" shadow-lg card border-info mb-3" style="max-width: 18rem;">
+          <div class="card-header bg-info border-info">{{place.name}}</div>
+          <div class="card-body text-dark">
+            <h5 class="card-title">Description</h5>
+            <p class="card-text">{{place.description}}</p>
+            </div>
+             <div class="card-footer bg-transparent border-info">{{place.type}} <span class="text-right">
+              <!-- <form class="form-inline my-lg-0 my-lg-0" (ngSubmit)="saveWishlist()">
+              <input [(ngModel)]="pla.name" class="form-control mr-sm-2"  name="name" type="text" placeholder="Search" [value]="place.name">
+              <input [(ngModel)]="pla.type" class="form-control mr-sm-2"  name="type" type="text" placeholder="Search" [value]="place.type" >
+              <input [(ngModel)]="pla.description" class="form-control mr-sm-2"  name="description" type="text" placeholder="Search" [value]="place.description"> -->
+              
+            <button class="btn btn-outline-danger text-right" type="submit" (click)="saveWishlist(place.name,place.type,place.description,id,place.atcocode,place.node,place.station_code,place.longitude,place.latitude)"><i class="far fa-heart"></i></button></span>
+              
+            </div>
+            <div *ngIf="place.type=='train_station'">
+              <button type="submit" class="btn btn-light" data-toggle="modal" data-target="#exampleModalCenter" (click)="getDesc(place.station_code)">
+                <i class="fa fa-train" style="color:red;font-size:x-large;"></i>
+              </button>
+              <div class="modal fade " id="exampleModalCenter" tabindex="-1"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg modal-scrollable">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Information</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <div>
+
+                      <table class="table table-bordered">
+                       
+                        <tr>
+                          <td >Departs</td>
+                          <td >Origin</td>
+                          <td >Destination</td>
+                          <td >Platform</td>
+                          <td >train_uid</td>
+                        </tr>
+                       
+                        <tbody *ngFor="let st of station">
+                          <tr>
+                            <td> {{st.aimed_departure_time}}  </td>
+                            <td>{{st.origin_name}}  </td>
+                            <td>{{st.destination_name}} </td>
+                            <td>{{st.platform}} </td>
+                            <td>{{st.train_uid}} </td>
+                          </tr>
+                        </tbody>
+                        
+                        </table>
+</div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                     
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+            <div *ngIf="place.type=='bus_stop'">
+              <button type="submit" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" (click)="getBus(place.atcocode)">
+                <i class="fa fa-bus" style="color:rgb(6, 97, 27);font-size:x-large;"></i>
+              </button>
+              <div class="modal fade " id="exampleModal" tabindex="-1"  aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg modal-scrollable">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Information</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                     <div *ngIf="buses?.length==0" class="text-center">
+      <img class="" src="assets/assets/img/noinfo.jpg" alt=".." style="width:auto;"  />
+    </div>
+    <div *ngIf="buses?.length!=0" class="text-center">
+      
+    
+                      <table class="table table-bordered">
+                       
+                        <tr>
+                          <td >Line</td>
+                          <td >Departure</td>
+                          <td >Stop</td>
+                         
+                        </tr>
+                       
+                        <tbody *ngFor="let bus of buses">
+                          <tr>
+                            <td> {{bus.line_name}}  </td>
+                            <td>{{bus.aimed_departure_time}}  </td>
+                            <td>{{bus.direction}} </td>
+                           
+                          </tr>
+                        </tbody>
+                        
+                        </table>
+</div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                     
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+          </div>
+          
+       
+      
+    <br>
+    
+    </div>
+   
+    </div>
+  </div>
+
+
+  
+  
+ 
